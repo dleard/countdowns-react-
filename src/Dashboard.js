@@ -18,7 +18,7 @@ class Dashboard extends Component {
 class CountdownList extends Component {
   render() {
     return (
-      <div id='timers'>
+      <div id='countdowns'>
         <EditableCountdown
           title='Countdown 1'
           category='c1'
