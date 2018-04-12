@@ -9,6 +9,9 @@ class Dashboard extends Component {
       <div className='ui five column centered grid'>
         <div className='column'>
           <CountdownList/>
+          <ToggleEdit 
+            isOpen={true}
+          />  
         </div>
       </div>
     );
@@ -36,6 +39,24 @@ class CountdownList extends Component {
   }
 }
 
+class ToggleEdit extends Component {
+  render() {
+    if (this.props.isOpen) {
+      return (
+        <EditCountdownCard/>
+      );
+    } else {
+        return (
+          <div className='ui basic content center aligned segment'>
+            <button className='ui basic button icon'>
+              <i className='plus icon' />
+            </button>
+          </div>
+        );
+    }
+  }
+}
+
 class EditableCountdown extends Component {
   render() {
       return (
@@ -46,6 +67,40 @@ class EditableCountdown extends Component {
         />
       );
     
+  }
+}
+
+class EditCountdownCard extends React.Component {
+  render() {
+    const submitText = this.props.title ? 'Update' : 'Create';
+    return (
+      <div className='ui centered card'>
+        <div className='content'>
+          <div className='ui form'>
+            <div className='field'>
+              <label>Title</label>
+              <input type='text' defaultValue={this.props.title} />
+            </div>
+            <div className='field'>
+              <label>Category</label>
+              <input type='text' defaultValue={this.props.category} />
+            </div>
+            <div className='field'>
+              <label>End Date</label>
+              <input type='text' defaultValue={this.props.date} />
+            </div>
+            <div className='ui two bottom attached buttons'>
+              <button className='ui basic blue button'>
+                {submitText}
+              </button>
+              <button className='ui basic red button'>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
