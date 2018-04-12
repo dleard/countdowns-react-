@@ -59,20 +59,36 @@ class ToggleEdit extends Component {
 
 class EditableCountdown extends Component {
   render() {
+    if (this.props.editFormOpen === true) {
       return (
-        <Countdown
+        <EditCountdownCard 
           title={this.props.title}
           category={this.props.category}
           date={this.props.date}
-        />
-      );
-    
+        />  
+      )
+    } else {  
+        return (
+          <Countdown
+            title={this.props.title}
+            category={this.props.category}
+            date={this.props.date}
+          />
+        );
+    }
   }
 }
 
 class EditCountdownCard extends React.Component {
   render() {
+    const dateTimeArray = ['yyyy-mm-dd','17:00:00']
     const submitText = this.props.title ? 'Update' : 'Create';
+    if (this.props.date !== undefined) {
+      const split = this.props.date.split('T');
+      dateTimeArray[0] = split[0];
+      dateTimeArray[1] = split[1];
+    }
+    console.log(dateTimeArray)
     return (
       <div className='ui centered card'>
         <div className='content'>
@@ -87,7 +103,11 @@ class EditCountdownCard extends React.Component {
             </div>
             <div className='field'>
               <label>End Date</label>
-              <input type='text' defaultValue={this.props.date} />
+              <input type='text' defaultValue={dateTimeArray[0]} />
+            </div>
+            <div className='field'>
+              <label>End Time</label>
+              <input type='text' defaultValue={dateTimeArray[1]} />
             </div>
             <div className='ui two bottom attached buttons'>
               <button className='ui basic blue button'>
