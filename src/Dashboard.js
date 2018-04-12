@@ -1,17 +1,32 @@
 import React, { Component } from 'react';
-import uuid from 'uuid'
+import uuid from 'uuid/v4'
 
 class Dashboard extends Component {
-  state = {}
+  state = {
+    countdowns: [
+      {
+        title: 'Countdown 1',
+        category: 'c1',
+        id: uuid(),
+        date:'2018-04-28T07:00:00', 
+      }, 
+      {
+        title: 'Countdown 2',
+        category: 'c2',
+        id: uuid(),
+        date:'2018-05-28T07:33:00',
+      }
+    ]
+  }
   
   render() {
     return (
       <div className='ui five column centered grid'>
         <div className='column'>
-          <CountdownList/>
-          <ToggleEdit 
-            isOpen={true}
-          />  
+          <CountdownList
+            countdowns={this.state.countdowns}
+          />
+          <ToggleEdit />  
         </div>
       </div>
     );
@@ -20,35 +35,44 @@ class Dashboard extends Component {
 
 class CountdownList extends Component {
   render() {
+    const countdowns = this.props.countdowns.map((countdown) => (
+      <EditableCountdown
+        key={countdown.id}
+        id={countdown.id}
+        title={countdown.title}
+        category={countdown.cagetory}
+        date={countdown.date}
+      />
+    ));
     return (
       <div id='countdowns'>
-        <EditableCountdown
-          title='Countdown 1'
-          category='c1'
-          date='2018-04-28T07:00:00'
-          editFormOpen={false}
-        />
-        <EditableCountdown
-          title='Countdown 2'
-          category='c2'
-          date='2018-05-28T07:00:00'
-          editFormOpen={true}
-        />
+        {countdowns}
       </div>
     );
   }
 }
 
 class ToggleEdit extends Component {
+  state = {
+    isOpen: false,
+  };
+
+  handleFormOpen = () => {
+    this.setState({ isOpen: true });
+  };
+  
   render() {
-    if (this.props.isOpen) {
+    if (this.state.isOpen) {
       return (
         <EditCountdownCard/>
       );
     } else {
         return (
           <div className='ui basic content center aligned segment'>
-            <button className='ui basic button icon'>
+            <button 
+              className='ui basic button icon'
+              onClick={this.handleFormOpen}
+            >
               <i className='plus icon' />
             </button>
           </div>
@@ -58,6 +82,9 @@ class ToggleEdit extends Component {
 }
 
 class EditableCountdown extends Component {
+  state = {
+    editFormOpen: false,
+  };
   render() {
     if (this.props.editFormOpen === true) {
       return (
@@ -80,34 +107,76 @@ class EditableCountdown extends Component {
 }
 
 class EditCountdownCard extends React.Component {
+  state = {
+    title: this.props.title || '',
+    category: this.props.category || '',
+    date: this.props.date || '2018-12-24T17:00:00'
+
+  };
+
+  handleTitleChange = (e) => {
+    this.setState({ title: e.target.value });
+  };
+
+  handleCategoryChange = (e) => {
+    this.setState({ category: e.target.value });
+  };
+
+  handleDateChange = (e) => {
+    const newDate = e.target.value;
+    const split = this.state.date.split('T');
+    const newFullDate = newDate + 'T' + split[1];
+    this.setState({ date: newFullDate });
+  };
+
+  handleTimeChange = (e) => {
+    const newTime = e.target.value;
+    const split = this.state.date.split('T');
+    const newFullDate = split[1] + 'T' + newTime;
+    this.setState({ date: newFullDate });
+  };
+  
   render() {
-    const dateTimeArray = ['yyyy-mm-dd','17:00:00']
+    const dateTimeArray=[]
     const submitText = this.props.title ? 'Update' : 'Create';
-    if (this.props.date !== undefined) {
-      const split = this.props.date.split('T');
-      dateTimeArray[0] = split[0];
-      dateTimeArray[1] = split[1];
-    }
-    console.log(dateTimeArray)
+    const split = this.state.date.split('T');
+    dateTimeArray[0] = split[0];
+    dateTimeArray[1] = split[1];
+    
     return (
       <div className='ui centered card'>
         <div className='content'>
           <div className='ui form'>
             <div className='field'>
               <label>Title</label>
-              <input type='text' defaultValue={this.props.title} />
+              <input 
+                type='text' 
+                value={this.state.title} 
+                onChange={this.handleTitleChange}
+              />
             </div>
             <div className='field'>
               <label>Category</label>
-              <input type='text' defaultValue={this.props.category} />
+              <input 
+                type='text' 
+                value={this.state.category} 
+                onChange={this.handleCategoryChange}
+              />
             </div>
             <div className='field'>
               <label>End Date</label>
-              <input type='text' defaultValue={dateTimeArray[0]} />
+              <input 
+                type='text' 
+                value={dateTimeArray[0]} 
+                onChange={this.handleDateChange}
+              />
             </div>
             <div className='field'>
               <label>End Time</label>
-              <input type='text' defaultValue={dateTimeArray[1]} />
+              <input type='text'
+              value={dateTimeArray[1]} 
+              onChange={this.handleTimeChange}
+            />
             </div>
             <div className='ui two bottom attached buttons'>
               <button className='ui basic blue button'>
