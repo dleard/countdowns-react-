@@ -23,6 +23,10 @@ class Dashboard extends Component {
     this.createCountdown(countdown);
   };
 
+  handleEditFormSubmit = (attributes) => {
+    this.updateCountdown(attributes);
+  };
+
   createCountdown = (countdown) => {
     const c = {
       title: countdown.title || 'title',
@@ -33,7 +37,22 @@ class Dashboard extends Component {
     this.setState({
       countdowns: this.state.countdowns.concat(c),
     })
-  }
+  };
+
+  updateCountdown = (attributes) => {
+    this.setState({
+      countdowns: this.state.countdowns.map((countdown) => {
+        if (countdown.id === attributes.id) {
+          return Object.assign({}, countdown, {
+            title: attributes.title,
+            category: attributes.category,
+          });
+        } else {
+          return countdown;
+        }
+      }),
+    });
+  };
   
   render() {
     return (
@@ -41,6 +60,7 @@ class Dashboard extends Component {
         <div className='column'>
           <CountdownList
             countdowns={this.state.countdowns}
+            onFormSubmit={this.handleEditFormSubmit}
           />
           <ToggleEdit 
             onFormSubmit={this.handleCreateFormSubmit}
@@ -60,6 +80,7 @@ class CountdownList extends Component {
         title={countdown.title}
         category={countdown.cagetory}
         date={countdown.date}
+        onFormSubmit={this.props.onFormSubmit}
       />
     ));
     return (
@@ -115,6 +136,27 @@ class EditableCountdown extends Component {
   state = {
     editFormOpen: false,
   };
+
+  handleEditClick =() => {
+    this.openForm();
+  };
+
+  handleFormClose = () => {
+    this.closeForm();
+  };
+
+  handleSubmit = (countdown) => {
+    this.props.onFormSubmit(countdown);
+  };
+
+  openForm = () => {
+    this.setState({ editFormOpen: true });
+  };
+
+  closeForm = () => {
+    this.setState({ editFormOpen: false });
+  };
+
   render() {
     if (this.props.editFormOpen === true) {
       return (
@@ -122,6 +164,8 @@ class EditableCountdown extends Component {
           title={this.props.title}
           category={this.props.category}
           date={this.props.date}
+          onFormSubmit={this.handleSubmit}
+          onFormClose={this.handleFormClose}
         />  
       )
     } else {  
@@ -130,6 +174,7 @@ class EditableCountdown extends Component {
             title={this.props.title}
             category={this.props.category}
             date={this.props.date}
+            onEditClick={this.handleEditClick}
           />
         );
     }
@@ -172,7 +217,7 @@ class EditCountdownCard extends React.Component {
       title: this.state.title,
       category: this.state.category,
     })
-  }
+  };
   
   render() {
     const dateTimeArray=[]
@@ -279,7 +324,10 @@ class Countdown extends Component {
             </h2>
           </div>
           <div className='extra content'>
-            <span className='right floated edit icon'>
+            <span 
+              className='right floated edit icon'
+              onClick={this.props.onEditClick}
+            >
               <i className='edit icon' />
             </span>
             <span className='right floated trash icon'>
