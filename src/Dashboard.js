@@ -147,6 +147,7 @@ class EditableCountdown extends Component {
 
   handleSubmit = (countdown) => {
     this.props.onFormSubmit(countdown);
+    this.closeForm();
   };
 
   openForm = () => {
@@ -158,7 +159,7 @@ class EditableCountdown extends Component {
   };
 
   render() {
-    if (this.props.editFormOpen === true) {
+    if (this.state.editFormOpen === true) {
       return (
         <EditCountdownCard 
           title={this.props.title}
