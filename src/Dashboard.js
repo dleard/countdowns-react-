@@ -18,6 +18,22 @@ class Dashboard extends Component {
       }
     ]
   }
+
+  handleCreateFormSubmit =(countdown) => {
+    this.createCountdown(countdown);
+  };
+
+  createCountdown = (countdown) => {
+    const c = {
+      title: countdown.title || 'title',
+      category: countdown.category || 'category',
+      id: uuid(),
+      date: countdown.date || '2018-12-24T17:00:00',
+    }
+    this.setState({
+      countdowns: this.state.countdowns.concat(c),
+    })
+  }
   
   render() {
     return (
@@ -26,7 +42,9 @@ class Dashboard extends Component {
           <CountdownList
             countdowns={this.state.countdowns}
           />
-          <ToggleEdit />  
+          <ToggleEdit 
+            onFormSubmit={this.handleCreateFormSubmit}
+          />  
         </div>
       </div>
     );
@@ -60,11 +78,23 @@ class ToggleEdit extends Component {
   handleFormOpen = () => {
     this.setState({ isOpen: true });
   };
+
+  handleFormClose = () => {
+    this.setState({ isOpen: false});
+  };
+
+  handleFormSubmit = (countdown) => {
+    this.props.onFormSubmit(countdown);
+    this.setState({ isOpen: false });
+  };
   
   render() {
     if (this.state.isOpen) {
       return (
-        <EditCountdownCard/>
+        <EditCountdownCard
+          onFormSubmit={this.handleFormSubmit}
+          onFormClose={this.handleFormClose}
+        />
       );
     } else {
         return (
@@ -135,10 +165,18 @@ class EditCountdownCard extends React.Component {
     const newFullDate = split[1] + 'T' + newTime;
     this.setState({ date: newFullDate });
   };
+
+  handleSubmit = () => {
+    this.props.onFormSubmit({
+      id: this.props.id,
+      title: this.state.title,
+      category: this.state.category,
+    })
+  }
   
   render() {
     const dateTimeArray=[]
-    const submitText = this.props.title ? 'Update' : 'Create';
+    const submitText = this.props.id ? 'Update' : 'Create';
     const split = this.state.date.split('T');
     dateTimeArray[0] = split[0];
     dateTimeArray[1] = split[1];
@@ -179,10 +217,16 @@ class EditCountdownCard extends React.Component {
             />
             </div>
             <div className='ui two bottom attached buttons'>
-              <button className='ui basic blue button'>
+              <button 
+                className='ui basic blue button'
+                onClick={this.handleSubmit}
+              >
                 {submitText}
               </button>
-              <button className='ui basic red button'>
+              <button 
+                className='ui basic red button'
+                onClick={this.props.onFormClose}
+              >
                 Cancel
               </button>
             </div>
