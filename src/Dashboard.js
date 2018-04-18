@@ -300,6 +300,14 @@ class EditCountdownCard extends React.Component {
 
 class Countdown extends Component {
   
+  componentDidMount() {
+    this.forceUpdateInterval = setInterval(() => this.forceUpdate(), 50);
+  }
+
+  componentWillUnMount() {
+    clearInterval(this.forceUpdateInterval);
+  }
+
   getDays = (date) => {
     const endDate = new Date(date)
     const timeInMs = endDate - Date.now();
