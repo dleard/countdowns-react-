@@ -27,6 +27,16 @@ class Dashboard extends Component {
     this.updateCountdown(attributes);
   };
 
+  handleDelete = (id) => {
+    this.deleteCountdown(id)
+  }
+
+  deleteCountdown = (id) => {
+    this.setState({
+      countdowns:this.state.countdowns.filter(cd => cd.id !== id )
+    });
+  };
+
   createCountdown = (countdown) => {
     const c = {
       title: countdown.title || 'title',
@@ -61,6 +71,7 @@ class Dashboard extends Component {
           <CountdownList
             countdowns={this.state.countdowns}
             onFormSubmit={this.handleEditFormSubmit}
+            onDelete={this.handleDelete}
           />
           <ToggleEdit 
             onFormSubmit={this.handleCreateFormSubmit}
@@ -78,9 +89,10 @@ class CountdownList extends Component {
         key={countdown.id}
         id={countdown.id}
         title={countdown.title}
-        category={countdown.cagetory}
+        category={countdown.category}
         date={countdown.date}
         onFormSubmit={this.props.onFormSubmit}
+        onDelete={this.props.onDelete}
       />
     ));
     return (
@@ -162,6 +174,7 @@ class EditableCountdown extends Component {
     if (this.state.editFormOpen === true) {
       return (
         <EditCountdownCard 
+          id={this.props.id}
           title={this.props.title}
           category={this.props.category}
           date={this.props.date}
@@ -172,10 +185,12 @@ class EditableCountdown extends Component {
     } else {  
         return (
           <Countdown
+            id={this.props.id}
             title={this.props.title}
             category={this.props.category}
             date={this.props.date}
             onEditClick={this.handleEditClick}
+            onDelete={this.props.onDelete}
           />
         );
     }
@@ -305,8 +320,11 @@ class Countdown extends Component {
     return hours + delim + minutes + delim + seconds;
   }
   
+  handleDelete = () => {
+    this.props.onDelete(this.props.id)
+  }
+
   render() {
-    
     return (
       <div className='ui card'>
         <div className='content'>
@@ -331,7 +349,10 @@ class Countdown extends Component {
             >
               <i className='edit icon' />
             </span>
-            <span className='right floated trash icon'>
+            <span 
+              className='right floated trash icon'
+              onClick={this.handleDelete}
+            >
               <i className='trash icon' />
             </span>
           </div>
