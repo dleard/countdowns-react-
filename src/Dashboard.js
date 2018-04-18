@@ -232,6 +232,7 @@ class EditCountdownCard extends React.Component {
       id: this.props.id,
       title: this.state.title,
       category: this.state.category,
+      date: this.state.date,
     })
   };
   
