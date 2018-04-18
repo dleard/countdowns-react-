@@ -5,16 +5,16 @@ class Dashboard extends Component {
   state = {
     countdowns: [
       {
-        title: 'Countdown 1',
-        category: 'c1',
+        title: 'NHL Draft Lottery',
+        category: 'example',
         id: uuid(),
-        date:'2018-04-28T07:00:00', 
+        date:'2018-04-28T19:00:00', 
       }, 
       {
-        title: 'Countdown 2',
-        category: 'c2',
+        title: 'My first baseball game',
+        category: 'example',
         id: uuid(),
-        date:'2018-05-28T07:33:00',
+        date:'2018-04-25T18:15:00',
       }
     ]
   }
@@ -319,7 +319,7 @@ class Countdown extends Component {
     const endDate = new Date(date)
     const timeInMs = endDate - Date.now();
     const delim = ":";
-    let hours = Math.ceil(timeInMs / (1000 * 60 * 60) % 60);
+    let hours = Math.floor(timeInMs / (1000 * 60 * 60) % 24);
     let minutes = Math.floor(timeInMs / (1000 * 60) % 60);
     let seconds = Math.floor(timeInMs / 1000 % 60);
     hours = hours < 10 ? '0' + hours : hours;
